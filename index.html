@@ -1,0 +1,1009 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#FFFFFF">
+  <meta name="description" content="Emma｜UI/UX 設計 × AI 應用規劃。以設計思維梳理複雜資訊，探索 AI 在數位體驗、知識管理與工作流程中的實際價值。">
+  <title>Emma — 化繁為簡，讓數據洞察更直覺</title>
+
+  <!-- Tailwind CSS CDN：此頁同時使用原生 CSS，確保無建置工具也能直接開啟。 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome：核心產品與技術解決方案區塊的圖示 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { primary: '#007F82', dark: '#005B60', tech: '#23B7BA', mist: '#E8F5F5', accent: '#F4A340', ink: '#20343C' }
+          },
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    /* ============================================================
+       Emma 個人品牌網站架構
+       個人品牌網站 Emma
+       ├── 01. Home｜首頁（品牌標語、價值主張、CTA、資料視覺）
+       ├── 02. About｜關於我（背景、經驗、學習、專業觀點）
+       ├── 03. Services｜AI 解決方案（四項核心服務）
+       ├── 04. Selected Works｜作品集（案例版型示範）
+       ├── 05. Insights｜技術文章／觀點（示範文章）
+       └── 06. Contact｜聯絡與預約（預約 CTA、品牌資訊）
+       ============================================================ */
+
+    /* 色彩系統：藍綠建立識別 60/30/10 —— 中性底色 60%、品牌色系 30%、暖橘強調色 ≤10% */
+    :root {
+      /* 品牌色 */
+      --primary: #007F82;       /* 專業藍綠：導覽列、主要按鈕、選中分頁 */
+      --primary-dark: #005B60;  /* 深海藍綠：滑過效果、頁尾、深色區塊 */
+      --tech: #23B7BA;          /* 科技青：圖示、插圖、裝飾性資料強調（避免用於小字） */
+      --mist: #E8F5F5;          /* 淺霧青：選中背景、重點區塊、提示 */
+      --accent: #F4A340;        /* 活力暖橘：小型 CTA 強調，搭配深色文字 */
+      /* 中性色 */
+      --white: #FFFFFF;
+      --soft: #F5F8FA;          /* 冷白：區塊底色 */
+      --ink: #20343C;           /* 深墨：標題與正文 */
+      --text: #526770;          /* 灰藍：次要文字 */
+      --muted: #6B7F88;
+      --line: #DCE5E9;          /* 邊線：分隔與邊框 */
+      /* 功能色 */
+      --success: #237A55;
+      --warning: #9A6000;
+      --error: #C43D46;
+      --info: #2368A0;
+      --header-h: 76px;
+      --container: 1160px;
+      --ease: cubic-bezier(.2,.75,.25,1);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: calc(var(--header-h) + 20px); }
+    body {
+      margin: 0; color: var(--ink); background: var(--white);
+      font-family: Inter, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      line-height: 1.7; -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    body.menu-open { overflow: hidden; }
+    a { color: inherit; text-decoration: none; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button, input { font: inherit; }
+    button:focus-visible, a:focus-visible { outline: 3px solid rgba(0,127,130,.42); outline-offset: 4px; }
+    img, svg { max-width: 100%; }
+    ::selection { background: rgba(0,127,130,.14); color: var(--primary-dark); }
+
+    .container { width: min(var(--container), calc(100% - 48px)); margin-inline: auto; }
+    .section { position: relative; padding: 112px 0; scroll-margin-top: calc(var(--header-h) + 18px); }
+    .section-soft { background: var(--soft); }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 10px; color: var(--primary);
+      font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 23px; height: 1px; background: currentColor; }
+    .section-heading { max-width: 700px; margin-bottom: 48px; }
+    .section-heading h2 { margin: 14px 0 16px; font-size: clamp(30px, 4vw, 46px); line-height: 1.22; letter-spacing: -.045em; font-weight: 750; }
+    .section-heading p { max-width: 650px; margin: 0; color: var(--text); font-size: 16px; }
+    .gradient-text { background: linear-gradient(105deg, var(--primary-dark) 0%, var(--primary) 55%, #1FA3A6 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+    /* Header / navigation */
+    .site-header {
+      height: var(--header-h); position: fixed; z-index: 100; inset: 0 0 auto;
+      border-bottom: 1px solid rgba(220,229,233,.76); background: rgba(255,255,255,.86);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      transition: box-shadow .25s ease, background .25s ease;
+    }
+    .site-header.scrolled { box-shadow: 0 8px 28px rgba(32,52,60,.06); background: rgba(255,255,255,.94); }
+    .nav-inner { height: 100%; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; font-size: 19px; font-weight: 800; letter-spacing: -.04em; flex-shrink: 0; }
+    .brand-mark {
+      position: relative; display: grid; place-items: center; width: 35px; height: 35px; border-radius: 12px;
+      color: #FFF; font-size: 16px; font-weight: 800; background: linear-gradient(145deg, #0E9295, #005B60);
+      box-shadow: 0 5px 14px rgba(0,127,130,.2);
+    }
+    .brand-mark::after { content: ""; position: absolute; width: 6px; height: 6px; right: -2px; top: -2px; border-radius: 50%; background: #78DCDD; border: 1px solid #FFF; }
+    .nav-links { display: flex; align-items: center; gap: clamp(16px, 2.5vw, 31px); margin-left: auto; }
+    .nav-link { position: relative; color: #627B85; font-size: 13px; font-weight: 650; transition: color .2s ease; white-space: nowrap; }
+    .nav-link::after { content: ""; position: absolute; left: 0; right: 0; bottom: -9px; height: 2px; border-radius: 9px; background: linear-gradient(90deg, var(--primary), var(--tech)); transform: scaleX(0); transform-origin: left; transition: transform .25s var(--ease); }
+    .nav-link:hover, .nav-link.active { color: var(--primary); }
+    .nav-link.active::after, .nav-link:hover::after { transform: scaleX(1); }
+    .nav-cta { padding: 10px 16px; border-radius: 100px; font-size: 12px; font-weight: 750; color: var(--ink); background: var(--accent); transition: transform .2s ease, box-shadow .2s ease, background .2s ease; white-space: nowrap; }
+    .nav-cta:hover { transform: translateY(-2px); background: #F7B462; box-shadow: 0 8px 20px rgba(244,163,64,.3); }
+    .menu-toggle { display: none; border: 1px solid var(--line); border-radius: 12px; background: #FFF; color: var(--ink); width: 42px; height: 42px; cursor: pointer; place-items: center; }
+
+    /* Buttons */
+    .btn { min-height: 50px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 13px 21px; border-radius: 13px; border: 1px solid transparent; font-size: 14px; font-weight: 750; cursor: pointer; transition: transform .22s var(--ease), box-shadow .22s ease, border-color .22s ease, background .22s ease; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { color: #FFF; background: var(--primary); box-shadow: 0 12px 25px rgba(0,127,130,.2); }
+    .btn-primary:hover { background: var(--primary-dark); box-shadow: 0 16px 32px rgba(0,91,96,.26); }
+    .btn-secondary { color: var(--ink); border-color: #E1E9EC; background: rgba(255,255,255,.78); }
+    .btn-secondary:hover { border-color: #A9E4E5; box-shadow: 0 8px 22px rgba(32,52,60,.08); }
+    .arrow { transition: transform .2s ease; font-size: 18px; line-height: 1; }
+    .btn:hover .arrow { transform: translateX(3px); }
+
+    /* Hero */
+    .hero { min-height: 730px; position: relative; padding: calc(var(--header-h) + 76px) 0 76px; overflow: hidden; isolation: isolate; }
+    .hero::before { content: ""; position: absolute; z-index: -2; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 79% 20%, rgba(35,183,186,.09), transparent 32%), radial-gradient(ellipse at 68% 67%, rgba(0,127,130,.1), transparent 35%), linear-gradient(180deg,#FFF 0%,#FDFEFE 100%); }
+    .hero-grid {
+      position: absolute; z-index: -1; inset: 0; pointer-events: none; opacity: .54;
+      background-image: linear-gradient(rgba(32,52,60,.055) 1px, transparent 1px), linear-gradient(90deg,rgba(32,52,60,.055) 1px, transparent 1px);
+      background-size: 44px 44px; mask-image: linear-gradient(to right, transparent 2%, black 48%, black 100%);
+    }
+    .hero-layout { display: grid; grid-template-columns: minmax(0, .96fr) minmax(430px, 1.04fr); gap: clamp(28px, 5vw, 70px); align-items: center; }
+    .hero-copy { position: relative; z-index: 2; padding-bottom: 12px; }
+    .availability { display: inline-flex; align-items: center; gap: 9px; padding: 7px 12px; border: 1px solid rgba(0,127,130,.14); background: rgba(255,255,255,.76); border-radius: 99px; color: #59717B; font-size: 12px; font-weight: 650; margin-bottom: 26px; box-shadow: 0 4px 12px rgba(32,52,60,.03); }
+    .availability-dot { width: 7px; height: 7px; background: var(--success); border-radius: 50%; box-shadow: 0 0 0 4px rgba(35,183,186,.1); }
+    .hero h1 { min-height: 2.45em; margin: 0; max-width: 650px; font-size: clamp(42px, 5.5vw, 68px); font-weight: 800; letter-spacing: -.06em; line-height: 1.19; }
+    .hero h1 .line { display: block; }
+    .typing-cursor { display: inline-block; width: 3px; height: .82em; margin-left: 5px; transform: translateY(.08em); background: var(--primary); border-radius: 9px; animation: cursorBlink .95s steps(2,start) infinite; }
+    .typing-cursor.done { opacity: 0; animation: none; }
+    @keyframes cursorBlink { to { visibility: hidden; } }
+    .hero-subtitle { max-width: 520px; margin: 23px 0 29px; color: #566E77; font-size: clamp(15px,1.5vw,17px); line-height: 1.9; }
+    .hero-subtitle strong { color: var(--ink); font-weight: 750; }
+    .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+    .hero-note { display: flex; align-items: center; gap: 9px; margin-top: 28px; color: #839AA3; font-size: 12px; }
+    .hero-note svg { flex: 0 0 auto; color: var(--primary); }
+    .hero-visual { position: relative; min-height: 490px; display: grid; align-items: center; }
+    .visual-halo { position: absolute; width: 400px; height: 400px; border-radius: 50%; right: 6%; top: 7%; background: radial-gradient(circle, rgba(35,183,186,.18), rgba(35,183,186,.13) 45%, transparent 70%); filter: blur(8px); animation: haloDrift 10s ease-in-out infinite alternate; }
+    @keyframes haloDrift { from { transform: translate(0,0) scale(.96); } to { transform: translate(-13px,12px) scale(1.05); } }
+    .visual-frame { position: relative; width: 100%; max-width: 580px; margin-inline: auto; aspect-ratio: 1.08; }
+    .visual-frame svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+    .network-line { stroke-dasharray: 5 8; animation: flowDash 16s linear infinite; }
+    @keyframes flowDash { to { stroke-dashoffset: -260; } }
+    .floating-panel { position: absolute; background: rgba(255,255,255,.87); border: 1px solid rgba(220,229,233,.9); border-radius: 17px; box-shadow: 0 18px 48px rgba(32,52,60,.12), inset 0 1px 0 rgba(255,255,255,.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    .panel-label { color: #7D96A0; text-transform: uppercase; letter-spacing: .12em; font-weight: 800; font-size: 9px; }
+    .signal-panel { width: 160px; top: 9%; right: 3%; padding: 14px 15px 13px; transform: rotate(3deg); animation: floatOne 7s ease-in-out infinite; }
+    .signal-title { margin-top: 5px; color: var(--ink); font-size: 14px; font-weight: 800; }
+    .signal-bars { display: flex; align-items: end; gap: 4px; height: 28px; margin-top: 9px; }
+    .signal-bars span { flex: 1; border-radius: 4px 4px 1px 1px; background: linear-gradient(180deg,#23B7BA,#23B7BA); opacity: .8; }
+    .signal-bars span:nth-child(1){height:28%}.signal-bars span:nth-child(2){height:48%}.signal-bars span:nth-child(3){height:38%}.signal-bars span:nth-child(4){height:72%}.signal-bars span:nth-child(5){height:60%}.signal-bars span:nth-child(6){height:94%}.signal-bars span:nth-child(7){height:78%}.signal-bars span:nth-child(8){height:100%}
+    .insight-panel { left: 0; bottom: 14%; width: 185px; padding: 15px; transform: rotate(-3deg); animation: floatTwo 8s ease-in-out infinite; }
+    .insight-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .mini-badge { border-radius: 6px; padding: 3px 6px; color: #237A55; background: #EDF1F3; font-weight: 800; font-size: 9px; }
+    .insight-value { margin-top: 6px; font-size: 24px; line-height: 1.3; letter-spacing: -.04em; font-weight: 800; }
+    .insight-caption { color: #7C939C; font-size: 10px; }
+    .insight-line { margin-top: 10px; height: 28px; width: 100%; }
+    .clarity-panel { right: 3%; bottom: 8%; display: flex; align-items: center; gap: 10px; padding: 11px 14px; }
+    .clarity-icon { width: 27px; height: 27px; display: grid; place-items: center; border-radius: 9px; background: linear-gradient(135deg,#E1F7F8,#F1F5F6); color: var(--primary); }
+    .clarity-title { color: var(--ink); font-size: 11px; font-weight: 800; }
+    .clarity-desc { color: #849AA3; font-size: 9px; }
+    @keyframes floatOne { 0%,100%{transform:translateY(0) rotate(3deg)}50%{transform:translateY(-9px) rotate(2deg)} }
+    @keyframes floatTwo { 0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(8px) rotate(-2deg)} }
+    .hero-bottom { position: relative; margin-top: 55px; padding-top: 23px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(220,229,233,.8); gap: 20px; }
+    .hero-bottom-label { font-size: 10px; color: #879DA6; font-weight: 750; letter-spacing: .13em; text-transform: uppercase; }
+    .expertise-list { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+    .expertise-list span { padding: 5px 10px; border: 1px solid #E8EEF1; border-radius: 999px; color: #617C87; background: rgba(255,255,255,.6); font-size: 11px; }
+
+    /* About */
+    .about-layout { display: grid; grid-template-columns: .78fr 1.22fr; gap: clamp(42px,7vw,95px); align-items: start; }
+    .about-side { position: relative; }
+    .about-stat { padding: 27px 27px 24px; border-radius: 22px; background: linear-gradient(145deg,#F5F7F8,#F8FAFB); border: 1px solid #EBF0F2; position: relative; overflow: hidden; }
+    .about-stat::after { content: ""; position: absolute; width: 170px; height: 170px; border: 1px solid rgba(35,183,186,.14); border-radius: 50%; right: -70px; bottom: -92px; box-shadow: 0 0 0 18px rgba(35,183,186,.035), 0 0 0 39px rgba(0,127,130,.025); }
+    .stat-number { font-size: clamp(54px,6vw,75px); line-height: 1; font-weight: 800; letter-spacing: -.07em; }
+    .stat-number span { color: var(--primary); font-size: .32em; letter-spacing: 0; margin-left: 5px; vertical-align: .28em; }
+    .stat-label { margin-top: 13px; font-weight: 750; color: #485B63; }
+    .stat-description { max-width: 250px; margin-top: 8px; color: #6B7F88; font-size: 13px; }
+    .about-quote { margin: 18px 0 0; padding: 22px 24px; border-left: 2px solid var(--tech); background: #FFF; color: #58707A; font-size: 15px; line-height: 1.95; }
+    .about-quote strong { color: var(--ink); }
+    .about-main h3 { margin: 0 0 13px; font-size: 22px; line-height: 1.45; letter-spacing: -.025em; }
+    .about-main > p { margin: 0 0 17px; color: var(--text); font-size: 15px; }
+    .tag-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 24px; }
+    .tag { color: #576F78; border: 1px solid #E1E9EC; background: #FFF; border-radius: 8px; padding: 6px 10px; font-size: 11px; font-weight: 700; }
+    .timeline { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; margin-top: 30px; }
+    .timeline-item { position: relative; padding: 18px 18px 19px; border: 1px solid #DCE5E9; border-radius: 14px; background: rgba(255,255,255,.72); }
+    .timeline-item::before { content: ""; display: block; height: 6px; width: 6px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 0 4px #F2F6F7; margin-bottom: 12px; }
+    .timeline-item h4 { margin: 0 0 7px; font-size: 13px; }
+    .timeline-item p { margin: 0; color: #6B7F88; font-size: 12px; line-height: 1.75; }
+    .about-principle { display: flex; align-items: flex-start; gap: 14px; margin-top: 28px; padding: 22px 24px; border: 1px solid #E8EEF1; border-radius: 16px; background: linear-gradient(120deg,rgba(232,245,245,.85),rgba(245,248,250,.7)); }
+    .quote-mark { color: var(--tech); font-family: Georgia,serif; font-size: 34px; line-height: 1; }
+    .about-principle p { margin: 0; color: #475B63; font-size: 14px; font-weight: 650; line-height: 1.85; }
+
+    /* Services */
+    .services-top { display: flex; align-items: end; justify-content: space-between; gap: 35px; margin-bottom: 42px; }
+    .services-top .section-heading { margin-bottom: 0; }
+    .service-aside { max-width: 245px; color: #7A919A; font-size: 12px; padding-bottom: 8px; }
+    .services-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 14px; }
+    .service-card { min-height: 302px; position: relative; padding: 24px 20px 23px; background: #FFF; border: 1px solid #DCE5E9; border-radius: 18px; overflow: hidden; transition: transform .28s var(--ease), border-color .28s ease, box-shadow .28s ease; }
+    .service-card::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(circle at 90% 0%,rgba(35,183,186,.1),transparent 45%); transition: opacity .3s ease; }
+    .service-card:hover { transform: translateY(-5px); border-color: #C9F1F2; box-shadow: 0 16px 36px rgba(32,52,60,.08); }
+    .service-card:hover::before { opacity: 1; }
+    .service-number { position: absolute; right: 18px; top: 18px; color: #C5D4DA; font-size: 11px; font-weight: 800; letter-spacing: .08em; }
+    .service-icon { width: 48px; height: 48px; display: grid; place-items: center; margin-bottom: 31px; border-radius: 15px; color: var(--primary); background: linear-gradient(145deg,#F5F7F8,#F6F8F9); border: 1px solid #EDF2F4; transition: transform .25s ease; }
+    .service-card:nth-child(2) .service-icon { color: #005B60; background: linear-gradient(145deg,#F4F7F8,#F8FAFB); }
+    .service-card:nth-child(3) .service-icon { color: #237A55; background: linear-gradient(145deg,#EEF2F4,#F5F7F8); }
+    .service-card:nth-child(4) .service-icon { color: #005B60; background: linear-gradient(145deg,#F5F7F8,#F8FAFB); }
+    .service-card:hover .service-icon { transform: translateY(-3px) rotate(-3deg); }
+    .service-card h3 { position: relative; margin: 0 0 12px; font-size: 17px; line-height: 1.45; letter-spacing: -.025em; }
+    .service-card p { position: relative; margin: 0; color: #6A828C; font-size: 13px; line-height: 1.85; }
+    .service-foot { display: flex; align-items: center; gap: 8px; margin-top: 23px; color: #007F82; font-size: 11px; font-weight: 750; }
+    .service-foot::before { content: ""; display: block; width: 19px; height: 1px; background: currentColor; }
+    .services-closing { margin-top: 25px; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 22px 25px; border-radius: 16px; background: linear-gradient(100deg,#005B60,#006E72 50%,#007F82); color: #FFF; }
+    .services-closing p { margin: 0; max-width: 760px; font-size: 14px; line-height: 1.8; color: rgba(255,255,255,.83); }
+    .services-closing strong { color: #FFF; }
+    .closing-mark { flex: 0 0 auto; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid rgba(255,255,255,.22); border-radius: 13px; color: #BDEEEF; background: rgba(255,255,255,.08); }
+
+    /* Selected works */
+    .works-header { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 38px; }
+    .works-header .section-heading { margin: 0; }
+    .placeholder-note { max-width: 250px; color: #78909A; font-size: 12px; border-left: 2px solid #B5EBEC; padding-left: 13px; }
+    .works-grid { display: grid; grid-template-columns: 1.16fr .84fr; gap: 20px; align-items: stretch; }
+    .project-card { background: #FFF; border: 1px solid #E7EDEF; border-radius: 21px; overflow: hidden; transition: transform .25s var(--ease), box-shadow .25s ease; }
+    .project-card:hover { transform: translateY(-4px); box-shadow: 0 18px 38px rgba(32,52,60,.08); }
+    .project-card.featured { grid-row: span 2; }
+    .project-visual { position: relative; min-height: 235px; padding: 24px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: linear-gradient(135deg,#F6F8F9,#F7F9FA); border-bottom: 1px solid #EBF1F3; }
+    .featured .project-visual { min-height: 355px; }
+    .project-visual::before { content: ""; position: absolute; width: 290px; height: 290px; border: 1px solid rgba(0,127,130,.14); border-radius: 50%; box-shadow: 0 0 0 30px rgba(0,127,130,.035), 0 0 0 62px rgba(35,183,186,.025); }
+    .project-chip { position: absolute; top: 15px; left: 15px; padding: 5px 8px; border: 1px solid rgba(220,229,233,.85); border-radius: 7px; background: rgba(255,255,255,.75); color: #64808B; font-size: 9px; font-weight: 800; letter-spacing: .05em; }
+    .project-ui { z-index: 1; width: min(100%,470px); min-height: 225px; position: relative; overflow: hidden; border-radius: 12px; border: 1px solid rgba(220,229,233,.95); background: rgba(255,255,255,.92); box-shadow: 0 20px 45px rgba(32,52,60,.14); display: grid; grid-template-columns: 76px 1fr; }
+    .ui-sidebar { padding: 13px 9px; border-right: 1px solid #EFF3F5; background: #FCFDFD; }
+    .ui-logo { width: 20px; height: 20px; border-radius: 6px; background: linear-gradient(135deg,#0E9295,#23B7BA); margin-bottom: 18px; }
+    .ui-skeleton { height: 5px; border-radius: 9px; background: #E4EBED; margin-bottom: 10px; }
+    .ui-skeleton.active { background: #B7ECED; width: 88%; }
+    .ui-content { padding: 16px; }
+    .ui-title { font-size: 10px; font-weight: 800; color: #3E4F56; margin-bottom: 11px; }
+    .ui-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 7px; }
+    .ui-stat { height: 42px; border: 1px solid #ECF1F3; border-radius: 6px; padding: 7px; }
+    .ui-stat b { display: block; height: 5px; width: 45%; border-radius: 4px; background: #BBEDEE; margin-bottom: 7px; }
+    .ui-stat span { display: block; height: 4px; width: 75%; border-radius: 4px; background: #E8EEF1; }
+    .ui-chart { display: flex; align-items: end; gap: 6px; height: 69px; margin-top: 10px; padding: 9px 10px 0; border: 1px solid #ECF1F3; border-radius: 6px; }
+    .ui-chart span { flex: 1; border-radius: 3px 3px 0 0; background: linear-gradient(180deg,#9DE5E6,#DBF6F6); }
+    .ui-table { margin-top: 9px; display: grid; gap: 5px; }
+    .ui-table span { height: 5px; border-radius: 3px; background: #EBF1F3; }
+    .ui-table span:nth-child(2n) { width: 83%; }
+    .project-visual.system { background: linear-gradient(140deg,#F5F7F8,#F5F8F9); }
+    .system-ui { z-index: 1; width: min(100%,360px); padding: 18px; border: 1px solid #DCE5E8; border-radius: 13px; background: rgba(255,255,255,.88); box-shadow: 0 20px 45px rgba(32,52,60,.1); }
+    .system-head { display: flex; align-items: center; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid #E8EEF0; font-size: 10px; font-weight: 800; color: #44575E; }
+    .system-row { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-bottom: 1px solid #EFF3F4; }
+    .system-row:last-child { border-bottom: 0; }
+    .system-dot { width: 25px; height: 25px; display: grid; place-items: center; border-radius: 8px; color: #237A55; background: #EBF0F2; font-size: 10px; }
+    .system-lines { flex: 1; }
+    .system-lines b,.system-lines span { display: block; height: 5px; border-radius: 4px; }
+    .system-lines b { width: 43%; background: #B2C2C8; margin-bottom: 6px; }
+    .system-lines span { width: 70%; background: #E5ECEE; }
+    .system-status { width: 28px; height: 10px; border-radius: 99px; background: #C5EFF0; }
+    .project-visual.ai { background: linear-gradient(135deg,#F6F8F9,#F5F7F8); }
+    .ai-canvas { z-index: 1; position: relative; width: min(100%,330px); height: 174px; border: 1px solid rgba(220,229,233,.95); border-radius: 13px; background: rgba(255,255,255,.78); box-shadow: 0 20px 40px rgba(0,91,96,.1); padding: 15px; }
+    .ai-canvas-head { display:flex; justify-content:space-between; align-items:center; color:#59727C; font-size:9px; font-weight:800; }
+    .ai-nodes { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 27px; }
+    .ai-node { width: 55px; height: 40px; display:grid; place-items:center; color:#007F82; font-size:10px; font-weight:800; border:1px solid #E3EAED; border-radius:8px; background:linear-gradient(145deg,#FFF,#F6F9FA); }
+    .ai-connector { height: 1px; width: 20px; background: linear-gradient(90deg,#A7E8E9,#9EE6E7); position:relative; }
+    .ai-connector::after { content:""; position:absolute; right:0; top:-3px; border-left:5px solid #96E3E5; border-top:3px solid transparent; border-bottom:3px solid transparent; }
+    .project-content { padding: 23px 24px 24px; }
+    .project-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 11px; }
+    .project-meta span { padding: 4px 7px; border-radius: 5px; background: #F4F7F8; color: #6C8690; font-size: 9px; font-weight: 800; }
+    .project-meta .demo-label { background: #FDF1E2; color: #9A6000; }
+    .project-content h3 { margin: 0 0 9px; font-size: 19px; letter-spacing: -.025em; line-height: 1.4; }
+    .project-content p { margin: 0; color: #68838E; font-size: 13px; line-height: 1.85; }
+    .project-details { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 13px 22px; margin-top: 19px; padding-top: 17px; border-top: 1px solid #EFF3F4; }
+    .project-details dt { color: #8AA0A9; font-size: 10px; font-weight: 800; margin-bottom: 4px; }
+    .project-details dd { margin: 0; color: #576E77; font-size: 11px; line-height: 1.65; }
+    .project-footer { margin-top: 16px; color: #8A9FA7; font-size: 10px; }
+
+    /* Insights */
+    .insights-layout { display: grid; grid-template-columns: .78fr 1.22fr; gap: clamp(36px,6vw,76px); align-items: start; }
+    .insights-intro { position: sticky; top: calc(var(--header-h) + 28px); }
+    .insights-intro .section-heading { margin-bottom: 24px; }
+    .insight-note { display: flex; gap: 11px; padding: 15px 16px; border-radius: 12px; background: #F6F8F9; color: #5F7984; font-size: 11px; line-height: 1.7; }
+    .insight-note svg { flex: 0 0 auto; color: var(--primary); margin-top: 2px; }
+    .article-list { border-top: 1px solid #E7EDEF; }
+    .article-item { display: grid; grid-template-columns: 82px 1fr 32px; align-items: start; gap: 18px; padding: 25px 0; border-bottom: 1px solid #E7EDEF; transition: padding .22s ease; }
+    .article-item:hover { padding-left: 6px; }
+    .article-index { font-size: 11px; font-weight: 800; color: #9BAEB6; letter-spacing: .06em; }
+    .article-category { display: inline-block; color: var(--primary); font-size: 10px; font-weight: 800; margin-bottom: 7px; }
+    .article-item h3 { margin: 0 0 8px; font-size: 17px; line-height: 1.45; letter-spacing: -.02em; }
+    .article-item p { margin: 0; color: #708B96; font-size: 12px; line-height: 1.8; }
+    .article-state { margin-top: 12px; color: #9AADB5; font-size: 10px; }
+    .article-arrow { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid #E7EDEF; border-radius: 50%; color: #879FA8; }
+
+    /* Contact / footer */
+    .contact-section { padding: 100px 0 78px; overflow: hidden; }
+    .contact-card { position: relative; isolation: isolate; overflow: hidden; padding: clamp(34px,6vw,72px); border: 1px solid #E5ECEE; border-radius: 28px; background: linear-gradient(120deg,#F8FAFA 0%,#FDFDFD 53%,#F7F9FA 100%); }
+    .contact-card::before { content: ""; position: absolute; z-index: -1; width: 470px; height: 470px; top: -250px; right: -70px; border: 1px solid rgba(0,127,130,.14); border-radius: 50%; box-shadow: 0 0 0 35px rgba(0,127,130,.03),0 0 0 75px rgba(35,183,186,.025),0 0 0 120px rgba(35,183,186,.02); }
+    .contact-card::after { content: ""; position: absolute; z-index: -1; width: 260px; height: 260px; left: 43%; bottom: -220px; background: rgba(35,183,186,.1); filter: blur(60px); border-radius: 50%; }
+    .contact-layout { display: grid; grid-template-columns: 1fr auto; gap: 42px; align-items: center; }
+    .contact-copy { max-width: 710px; }
+    .contact-copy h2 { margin: 15px 0 17px; font-size: clamp(31px,4.5vw,52px); letter-spacing: -.05em; line-height: 1.2; }
+    .contact-copy p { margin: 0; color: #5E7781; font-size: 15px; line-height: 1.95; max-width: 660px; }
+    .contact-action { position: relative; min-width: 215px; }
+    .connect-btn { position: relative; width: 100%; min-height: 60px; padding: 12px 17px; border: 1px solid transparent; border-radius: 15px; background: var(--accent); box-shadow: 0 10px 25px rgba(244,163,64,.28); color: var(--ink); font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px; transition: transform .25s ease, box-shadow .25s ease; }
+    .connect-btn:hover, .connect-btn:focus-visible { transform: translateY(-3px); background: #F7B462; box-shadow: 0 15px 32px rgba(244,163,64,.34),0 0 0 5px rgba(244,163,64,.14); }
+    .connect-btn:hover::before, .connect-btn:focus-visible::before { opacity: 1; }
+    .connect-btn::before { content: ""; position: absolute; inset: -2px; border-radius: 17px; background: rgba(244,163,64,.35); filter: blur(12px); z-index: -1; opacity: .22; transition: opacity .25s ease; }
+    .ready-status { display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 11px; color: #237A55; font-size: 10px; letter-spacing: .03em; }
+    .ready-status span { width: 5px; height: 5px; border-radius: 50%; background: var(--success); }
+    .contact-details { display: flex; flex-wrap: wrap; gap: 10px 23px; margin-top: 28px; color: #77909A; font-size: 11px; }
+    .contact-detail { display: flex; align-items: center; gap: 7px; }
+    .contact-detail svg { color: #4E9A9C; }
+    .site-footer { padding: 25px 0 32px; background: var(--primary-dark); }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .footer-brand { display:flex; align-items:center; gap:9px; color: rgba(255,255,255,.9); font-size:12px; }
+    .footer-brand .brand-mark { width:25px;height:25px;border-radius:8px;font-size:11px; background: rgba(255,255,255,.14); box-shadow: none; }
+    .footer-copy { color: rgba(255,255,255,.72); font-size: 10px; text-align: right; }
+
+    /* Reveal-in animations */
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+    .delay-1 { transition-delay: .08s; } .delay-2 { transition-delay: .16s; } .delay-3 { transition-delay: .24s; }
+
+    /* 核心產品與技術解決方案 */
+    .solutions-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; }
+    .solution-card { position: relative; display: flex; flex-direction: column; padding: 26px 24px 24px; background: #FFF; border: 1px solid #DCE5E9; border-radius: 18px; transition: transform .28s var(--ease), border-color .28s ease, box-shadow .28s ease; }
+    .solution-card:hover, .solution-card:focus-visible { transform: translateY(-5px); border-color: #C9F1F2; box-shadow: 0 16px 36px rgba(32,52,60,.08); outline: none; }
+    .solution-icon { width: 52px; height: 52px; display: grid; place-items: center; margin-bottom: 26px; border-radius: 15px; font-size: 23px; color: var(--ink); background: linear-gradient(145deg,#F5F7F8,#F6F8F9); border: 1px solid #EDF2F4; transition: transform .25s ease; }
+    .solution-card:nth-child(2) .solution-icon { color: #005B60; background: linear-gradient(145deg,#F4F7F8,#F8FAFB); }
+    .solution-card:nth-child(3) .solution-icon { color: #237A55; background: linear-gradient(145deg,#EEF2F4,#F5F7F8); }
+    .solution-card:hover .solution-icon { transform: translateY(-3px) rotate(-3deg); }
+    .solution-card h3 { margin: 0 0 10px; font-size: 18px; line-height: 1.45; letter-spacing: -.025em; }
+    .solution-card p { flex: 1; margin: 0; color: #6A828C; font-size: 13px; line-height: 1.85; }
+    .solution-link { display: flex; align-items: center; gap: 8px; margin-top: 22px; padding-top: 16px; border-top: 1px solid #EFF3F4; color: var(--primary); font-size: 12px; font-weight: 750; }
+    .solution-link i { font-size: 11px; transition: transform .2s ease; }
+    .solution-card:hover .solution-link i { transform: translateX(3px); }
+
+    /* 社群連結與需求表單 */
+    .connect-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: stretch; }
+    .connect-panel { padding: 28px 26px; background: #FFF; border: 1px solid #DCE5E9; border-radius: 20px; }
+    .connect-panel h3 { margin: 0 0 6px; font-size: 18px; letter-spacing: -.025em; }
+    .connect-panel > p { margin: 0 0 22px; color: #6A828C; font-size: 13px; line-height: 1.85; }
+    .social-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+    .social-link { --brand: var(--ink); display: flex; align-items: center; gap: 13px; padding: 14px 15px; border: 1px solid #DCE5E9; border-radius: 15px; background: #FFF; transition: transform .25s var(--ease), border-color .25s ease, box-shadow .25s ease; }
+    .social-link i { width: 42px; height: 42px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 12px; font-size: 20px; color: #FFF; background: var(--brand); transition: transform .25s ease; }
+    .social-link b { display: block; font-size: 14px; line-height: 1.3; }
+    .social-link small { display: block; color: #859AA3; font-size: 11px; line-height: 1.5; }
+    a.social-link:hover, a.social-link:focus-visible { transform: translateY(-3px); border-color: color-mix(in srgb, var(--brand) 40%, #DCE5E9); box-shadow: 0 12px 26px rgba(32,52,60,.09); outline: none; }
+    a.social-link:hover i { transform: scale(1.08) rotate(-4deg); }
+    .social-link.line { --brand: #06C755; }
+    .social-link.facebook { --brand: #1877F2; }
+    .social-link.linkedin { --brand: #0A66C2; }
+    .social-link.github { --brand: #24292F; }
+    .social-link.pending { opacity: .6; cursor: default; }
+    .form-panel { display: flex; flex-direction: column; background: linear-gradient(145deg,#F8FAFA,#FAFBFC); border-color: #E5ECEE; }
+    .form-steps { display: grid; gap: 10px; margin: 0 0 24px; padding: 0; list-style: none; }
+    .form-steps li { display: flex; align-items: center; gap: 10px; color: #576E77; font-size: 13px; }
+    .form-steps i { color: var(--success); }
+    .form-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; }
+    .form-actions .btn { font-family: inherit; }
+    .form-embed { display: none; margin-top: 20px; height: 680px; overflow: hidden; border: 1px solid #E5ECEE; border-radius: 14px; background: #FFF; }
+    .form-embed.open { display: block; }
+    .form-embed iframe { display: block; width: 100%; height: 100%; border: 0; }
+
+    @media (max-width: 1080px) {
+      :root { --header-h: 70px; }
+      .container { width: min(100% - 40px, var(--container)); }
+      .nav-links { gap: 16px; }
+      .nav-link { font-size: 12px; }
+      .nav-cta { padding: 9px 12px; }
+      .hero-layout { grid-template-columns: minmax(0, .92fr) minmax(360px, 1.08fr); gap: 24px; }
+      .hero h1 { font-size: clamp(43px,5.5vw,60px); }
+      .hero-visual { min-height: 430px; }
+      .services-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .service-card { min-height: 260px; }
+      .solutions-grid { grid-template-columns: 1fr; max-width: 640px; }
+      .connect-layout { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .connect-panel { padding: 22px 18px; }
+      .social-grid { grid-template-columns: 1fr; }
+      .form-actions .btn { flex: 1 1 100%; }
+      .form-embed { height: 560px; }
+    }
+    @media (max-width: 820px) {
+      .section { padding: 88px 0; }
+      .menu-toggle { display: grid; margin-left: auto; }
+      .nav-cta { display: none; }
+      .nav-links { position: fixed; z-index: 99; top: var(--header-h); left: 0; right: 0; display: flex; flex-direction: column; align-items: stretch; gap: 0; margin: 0; padding: 10px 24px 24px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.98); backdrop-filter: blur(16px); box-shadow: 0 16px 28px rgba(32,52,60,.08); opacity: 0; visibility: hidden; transform: translateY(-8px); transition: opacity .2s ease, transform .2s ease, visibility .2s; }
+      .nav-links.open { opacity: 1; visibility: visible; transform: translateY(0); }
+      .nav-link { padding: 14px 3px; border-bottom: 1px solid #F0F4F5; font-size: 14px; }
+      .nav-link::after { display: none; }
+      .hero { padding-top: calc(var(--header-h) + 58px); min-height: 0; }
+      .hero-layout { grid-template-columns: 1fr; gap: 10px; }
+      .hero-copy { max-width: 680px; }
+      .hero h1 { max-width: 680px; min-height: 0; font-size: clamp(45px,8vw,67px); }
+      .hero-visual { min-height: min(520px, 68vw); margin-top: 4px; }
+      .visual-frame { max-width: 590px; }
+      .hero-bottom { margin-top: 25px; }
+      .about-layout { grid-template-columns: 1fr; gap: 31px; }
+      .about-side { display: grid; grid-template-columns: .8fr 1.2fr; gap: 15px; align-items: stretch; }
+      .about-quote { margin: 0; display: flex; align-items: center; }
+      .services-top,.works-header { align-items: flex-start; flex-direction: column; gap: 20px; }
+      .service-aside,.placeholder-note { max-width: 560px; }
+      .works-grid { grid-template-columns: 1fr 1fr; }
+      .project-card.featured { grid-column: 1 / -1; grid-row: auto; }
+      .featured .project-visual { min-height: 320px; }
+      .insights-layout { grid-template-columns: 1fr; gap: 22px; }
+      .insights-intro { position: static; }
+      .insights-intro .section-heading { margin-bottom: 18px; }
+      .insight-note { max-width: 560px; }
+      .contact-layout { grid-template-columns: 1fr; gap: 26px; }
+      .contact-action { max-width: 250px; }
+    }
+    @media (max-width: 560px) {
+      :root { --header-h: 66px; }
+      .container { width: calc(100% - 36px); }
+      .section { padding: 72px 0; }
+      .section-heading { margin-bottom: 32px; }
+      .section-heading h2 { font-size: 32px; }
+      .section-heading p { font-size: 14px; }
+      .brand { font-size: 18px; }
+      .hero { padding: calc(var(--header-h) + 44px) 0 40px; }
+      .availability { margin-bottom: 21px; font-size: 10px; }
+      .hero h1 { font-size: clamp(39px,10vw,52px); letter-spacing: -.065em; line-height: 1.23; }
+      .hero-subtitle { margin: 18px 0 23px; font-size: 14px; line-height: 1.85; }
+      .hero-actions { align-items: stretch; flex-direction: column; max-width: 300px; }
+      .hero-actions .btn { width: 100%; }
+      .hero-note { margin-top: 20px; align-items: flex-start; }
+      .hero-visual { min-height: 360px; margin: 0 -12px; }
+      .visual-frame { width: 108%; margin-left: -4%; }
+      .visual-halo { width: 290px; height: 290px; right: 4%; top: 10%; }
+      .signal-panel { width: 122px; top: 9%; right: 4%; padding: 10px; }
+      .panel-label { font-size: 7px; }
+      .signal-title { font-size: 11px; }
+      .signal-bars { height: 21px; }
+      .insight-panel { width: 143px; left: 1%; bottom: 11%; padding: 11px; }
+      .insight-value { font-size: 20px; }
+      .insight-caption { font-size: 9px; }
+      .clarity-panel { right: 0; bottom: 2%; padding: 8px 10px; gap: 7px; }
+      .clarity-title { font-size: 9px; }
+      .clarity-desc { font-size: 8px; }
+      .clarity-icon { width: 23px; height: 23px; }
+      .hero-bottom { align-items: flex-start; flex-direction: column; margin-top: 14px; padding-top: 17px; }
+      .expertise-list { justify-content: flex-start; }
+      .about-side { grid-template-columns: 1fr; }
+      .about-stat { padding: 23px; }
+      .stat-number { font-size: 60px; }
+      .about-quote { padding: 18px 20px; font-size: 13px; }
+      .about-main h3 { font-size: 19px; }
+      .about-main > p { font-size: 14px; }
+      .timeline { grid-template-columns: 1fr; gap: 10px; margin-top: 22px; }
+      .timeline-item { padding: 16px; }
+      .about-principle { padding: 18px; }
+      .services-grid { grid-template-columns: 1fr; gap: 11px; }
+      .service-card { min-height: 0; padding: 21px; }
+      .service-icon { margin-bottom: 22px; }
+      .service-card h3 { font-size: 17px; }
+      .service-card p { font-size: 13px; }
+      .service-foot { margin-top: 17px; }
+      .services-closing { align-items: flex-start; padding: 19px; gap: 12px; }
+      .services-closing p { font-size: 12px; }
+      .closing-mark { width: 36px; height: 36px; }
+      .works-grid { grid-template-columns: 1fr; gap: 13px; }
+      .project-card.featured { grid-column: auto; }
+      .project-visual,.featured .project-visual { min-height: 230px; padding: 15px; }
+      .project-ui { min-height: 192px; grid-template-columns: 55px 1fr; }
+      .ui-content { padding: 12px; }
+      .ui-stats { gap: 4px; }
+      .project-content { padding: 19px; }
+      .project-content h3 { font-size: 17px; }
+      .project-details { gap: 12px; }
+      .article-item { grid-template-columns: 42px 1fr 25px; gap: 10px; padding: 21px 0; }
+      .article-item h3 { font-size: 15px; }
+      .article-item p { font-size: 12px; }
+      .article-arrow { width: 25px; height: 25px; }
+      .contact-section { padding: 68px 0 52px; }
+      .contact-card { padding: 29px 22px; border-radius: 22px; }
+      .contact-copy h2 { font-size: 34px; }
+      .contact-copy p { font-size: 13px; }
+      .contact-action { max-width: none; }
+      .connect-btn { min-height: 56px; }
+      .contact-details { flex-direction: column; gap: 9px; }
+      .footer-inner { align-items: flex-start; flex-direction: column; gap: 10px; }
+      .footer-copy { text-align: left; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      .reveal { opacity: 1; transform: none; }
+      .typing-cursor { animation: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header" id="siteHeader">
+    <div class="container nav-inner">
+      <a class="brand" href="#home" aria-label="Emma 個人品牌首頁">
+        <span class="brand-mark" aria-hidden="true">E</span><span>Emma<span class="gradient-text">.</span></span>
+      </a>
+      <nav class="nav-links" id="siteNav" aria-label="主要導覽">
+        <a class="nav-link active" href="#home">首頁</a>
+        <a class="nav-link" href="#about">關於我</a>
+        <a class="nav-link" href="#services">AI 解決方案</a>
+        <a class="nav-link" href="#works">作品集</a>
+        <a class="nav-link" href="#insights">觀點文章</a>
+        <a class="nav-link" href="#contact">聯絡合作</a>
+      </nav>
+      <a class="nav-cta" href="https://calendar.app.google/X8D4iH9J2Y5DHUbK7" target="_blank" rel="noopener noreferrer">預約 AI 諮詢 ↗</a>
+      <button class="menu-toggle" id="menuToggle" type="button" aria-label="開啟導覽選單" aria-expanded="false" aria-controls="siteNav">
+        <svg id="menuIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- 01 / HOME -->
+    <section class="hero" id="home" aria-labelledby="heroTitle">
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="container">
+        <div class="hero-layout">
+          <div class="hero-copy">
+            <div class="availability"><span class="availability-dot" aria-hidden="true"></span> UI/UX DESIGN × AI APPLICATION</div>
+            <h1 id="heroTitle" aria-label="化繁為簡，讓數據洞察更直覺。">
+              <span class="line" id="heroLineOne">化繁為簡，</span>
+              <span class="line"><span class="gradient-text" id="heroLineTwo">讓數據洞察更直覺。</span><span class="typing-cursor" id="typingCursor" aria-hidden="true"></span></span>
+            </h1>
+            <p class="hero-subtitle">結合 <strong>UI/UX 設計思維與 AI 應用</strong>，讓複雜資訊更清晰，讓創新想法真正落地。</p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="https://calendar.app.google/X8D4iH9J2Y5DHUbK7" target="_blank" rel="noopener noreferrer">預約 AI 諮詢 <span class="arrow" aria-hidden="true">↗</span></a>
+              <a class="btn btn-secondary" href="#works">探索我的作品 <span class="arrow" aria-hidden="true">→</span></a>
+            </div>
+            <div class="hero-note">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.64 5.64l2.12 2.12m8.48 8.48 2.12 2.12m0-12.72-2.12 2.12m-8.48 8.48-2.12 2.12"/><circle cx="12" cy="12" r="4"/></svg>
+              從使用者需求出發，讓設計與科技一起解決真正的問題。
+            </div>
+          </div>
+
+          <div class="hero-visual" aria-label="以分散的資料節點匯聚成清晰洞察的抽象視覺示意" role="img">
+            <div class="visual-halo" aria-hidden="true"></div>
+            <div class="visual-frame" aria-hidden="true">
+              <svg viewBox="0 0 560 520" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="mainStroke" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#23B7BA"/><stop offset=".58" stop-color="#4CC4C6"/><stop offset="1" stop-color="#C2EFF0"/></linearGradient>
+                  <linearGradient id="coreFill" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#F1F5F6"/></linearGradient>
+                  <radialGradient id="coreGlow"><stop offset="0" stop-color="#B5EBEC" stop-opacity=".45"/><stop offset="1" stop-color="#B5EBEC" stop-opacity="0"/></radialGradient>
+                  <filter id="nodeShadow" x="-80%" y="-80%" width="260%" height="260%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#2A6F73" flood-opacity=".16"/></filter>
+                </defs>
+                <circle cx="294" cy="253" r="190" fill="url(#coreGlow)"/>
+                <circle cx="294" cy="253" r="161" fill="none" stroke="#CDF2F3" stroke-opacity=".55" stroke-dasharray="2 9"/>
+                <circle cx="294" cy="253" r="127" fill="none" stroke="#CCF1F2" stroke-opacity=".8" stroke-dasharray="2 7"/>
+                <g fill="none" stroke="url(#mainStroke)" stroke-width="1.45" stroke-opacity=".78" class="network-line">
+                  <path d="M75 108 C142 116 157 165 203 193 S260 221 294 253"/>
+                  <path d="M86 260 C151 250 172 229 216 239 S260 249 294 253"/>
+                  <path d="M117 379 C174 346 202 313 228 286 S270 264 294 253"/>
+                  <path d="M192 75 C205 128 231 153 260 188 S284 227 294 253"/>
+                  <path d="M422 100 C394 140 365 171 337 202 S308 234 294 253"/>
+                  <path d="M480 235 C423 238 394 247 358 250 S322 253 294 253"/>
+                  <path d="M432 388 C389 352 366 319 340 290 S311 264 294 253"/>
+                  <path d="M281 448 C284 389 288 345 291 311 S293 276 294 253"/>
+                </g>
+                <g fill="#D9F5F5" stroke="#FFF" stroke-width="2">
+                  <circle cx="75" cy="108" r="6"/><circle cx="86" cy="260" r="5"/><circle cx="117" cy="379" r="7"/><circle cx="192" cy="75" r="5"/>
+                  <circle cx="422" cy="100" r="7"/><circle cx="480" cy="235" r="5"/><circle cx="432" cy="388" r="6"/><circle cx="281" cy="448" r="5"/>
+                </g>
+                <g filter="url(#nodeShadow)">
+                  <circle cx="294" cy="253" r="66" fill="url(#coreFill)" stroke="#BEEEEF" stroke-width="1.4"/>
+                  <circle cx="294" cy="253" r="52" fill="none" stroke="#E7EDF0" stroke-width="1"/>
+                  <path d="M270 258h13l8-17 10 26 8-15h10" fill="none" stroke="#007F82" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="294" cy="253" r="4" fill="#23B7BA"/>
+                </g>
+                <g fill="#9FE6E7" stroke="#FFF" stroke-width="2">
+                  <circle cx="203" cy="193" r="5"/><circle cx="216" cy="239" r="4"/><circle cx="228" cy="286" r="4"/><circle cx="260" cy="188" r="4"/>
+                  <circle cx="337" cy="202" r="5"/><circle cx="358" cy="250" r="4"/><circle cx="340" cy="290" r="5"/><circle cx="291" cy="311" r="4"/>
+                </g>
+                <g fill="none" stroke="#B6ECED" stroke-width="1" stroke-opacity=".8">
+                  <path d="M75 108L145 80 192 75"/><path d="M86 260L48 226 42 181"/><path d="M117 379L74 408 65 444"/>
+                  <path d="M422 100L463 70 495 83"/><path d="M480 235L520 214 527 177"/><path d="M432 388L473 421 507 414"/>
+                </g>
+                <g fill="#A9E8E9" opacity=".6"><circle cx="145" cy="80" r="2.5"/><circle cx="42" cy="181" r="2.5"/><circle cx="65" cy="444" r="2.5"/><circle cx="495" cy="83" r="2.5"/><circle cx="527" cy="177" r="2.5"/><circle cx="507" cy="414" r="2.5"/></g>
+              </svg>
+              <div class="floating-panel signal-panel">
+                <div class="panel-label">Signal / 01</div><div class="signal-title">Data patterns</div>
+                <div class="signal-bars"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+              </div>
+              <div class="floating-panel insight-panel">
+                <div class="insight-head"><span class="panel-label">Key insight</span><span class="mini-badge">CLARITY</span></div>
+                <div class="insight-value">Less noise<span class="gradient-text">.</span></div>
+                <div class="insight-caption">把複雜訊號轉為清楚方向</div>
+                <svg class="insight-line" viewBox="0 0 150 28" fill="none"><path d="M1 24C15 22 17 10 31 15S48 22 61 12 81 4 92 12 117 20 127 8 143 5 149 2" stroke="#98E4E5" stroke-width="1.7" stroke-linecap="round"/><path d="M1 24C15 22 17 10 31 15S48 22 61 12 81 4 92 12 117 20 127 8 143 5 149 2V28H1Z" fill="url(#lineFill)" fill-opacity=".15"/><defs><linearGradient id="lineFill" x1="75" y1="0" x2="75" y2="28"><stop stop-color="#23B7BA"/><stop offset="1" stop-color="#8FDADC" stop-opacity="0"/></linearGradient></defs></svg>
+              </div>
+              <div class="floating-panel clarity-panel">
+                <div class="clarity-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></div>
+                <div><div class="clarity-title">Insight, made clear.</div><div class="clarity-desc">Design × Data × AI</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-bottom">
+          <div class="hero-bottom-label">Areas of focus</div>
+          <div class="expertise-list"><span>UI/UX Design</span><span>Information Architecture</span><span>AI Application</span><span>Workflow Optimization</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 / ABOUT -->
+    <section class="section section-soft" id="about" aria-labelledby="aboutTitle">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">About Emma</span>
+          <h2 id="aboutTitle">讓設計不只好看，<br><span class="gradient-text">更能解決問題。</span></h2>
+          <p>以使用者為核心，從資訊、流程與產品目標出發，思考設計與 AI 如何創造真實價值。</p>
+        </div>
+        <div class="about-layout">
+          <aside class="about-side reveal">
+            <div class="about-stat">
+              <div class="stat-number">10<span>年</span></div>
+              <div class="stat-label">數位設計與專案協作經驗</div>
+              <p class="stat-description">累積企業網站、數位平台、後台管理系統與互動介面的實務參與經驗。</p>
+            </div>
+            <blockquote class="about-quote">「好的設計，是<strong>理解問題之後</strong>，找到更清楚、更有效的方式，讓人與資訊真正連結。」</blockquote>
+          </aside>
+          <div class="about-main reveal delay-1">
+            <h3>把複雜的事情，整理成容易理解與執行的體驗。</h3>
+            <p>我持續結合數位設計、使用者體驗與創新科技，打造兼具美感、效率與實用性的數位體驗。對我而言，設計不只是畫面呈現，也是釐清需求、組織資訊、傳遞價值與建立信任的過程。</p>
+            <p>在專案合作中，我參與需求分析、資訊架構規劃、介面設計、原型製作與跨部門溝通，擅長在使用者需求與業務目標之間整理出清楚的操作路徑。近年也持續探索生成式 AI 如何支援設計發想、視覺素材製作、互動原型與工作流程優化。</p>
+            <div class="tag-row" aria-label="專業關鍵字"><span class="tag">使用者體驗</span><span class="tag">資訊架構</span><span class="tag">Design Thinking</span><span class="tag">生成式 AI</span><span class="tag">RWD</span><span class="tag">Design System</span></div>
+            <div class="timeline" aria-label="專業學習與實務經驗">
+              <article class="timeline-item"><h4>產業專案經驗</h4><p>參與企業網站、數位平台、後台系統與互動介面，串連需求、設計與協作。</p></article>
+              <article class="timeline-item"><h4>業界課程與培訓</h4><p>持續學習 UI/UX、設計思維與生成式 AI 應用，將新知帶回日常實務。</p></article>
+              <article class="timeline-item"><h4>跨領域設計思考</h4><p>探索人機互動、資訊架構、服務設計與創新管理，建立系統化觀點。</p></article>
+              <article class="timeline-item"><h4>持續實驗與迭代</h4><p>運用設計工具與 AI 輔助流程，驗證想法、整理資訊並探索更有效的做法。</p></article>
+            </div>
+            <div class="about-principle"><span class="quote-mark" aria-hidden="true">“</span><p>創新不只是追求新技術，而是找到更好的方式，讓人、產品與服務產生真正的連結。</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 / SERVICES -->
+    <section class="section" id="services" aria-labelledby="servicesTitle">
+      <div class="container">
+        <div class="services-top">
+          <div class="section-heading reveal">
+            <span class="eyebrow">AI Solutions</span>
+            <h2 id="servicesTitle">AI 解決方案<span class="gradient-text">｜</span><br>以智慧科技賦能企業創新</h2>
+            <p>從實際需求出發，結合人工智慧與數位設計思維，協助企業評估應用機會、規劃導入路徑，讓創新構想逐步落地。</p>
+          </div>
+          <p class="service-aside reveal delay-1">不是為了導入 AI 而導入，而是先理解工作情境與真正的問題，再尋找適合的解決方式。</p>
+        </div>
+        <div class="services-grid">
+          <article class="service-card reveal">
+            <span class="service-number">01 / STRATEGY</span>
+            <div class="service-icon"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/><path d="m17 7 4-4"/></svg></div>
+            <h3>AI 應用策略規劃</h3>
+            <p>釐清業務目標與使用情境，盤點適合導入 AI 的流程與機會，建立符合組織需求的應用方向。</p>
+            <div class="service-foot">從機會盤點到策略藍圖</div>
+          </article>
+          <article class="service-card reveal delay-1">
+            <span class="service-number">02 / WORKFLOW</span>
+            <div class="service-icon"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="7" height="6" rx="1.5"/><rect x="14" y="14" width="7" height="6" rx="1.5"/><path d="M10 7h3a2 2 0 0 1 2 2v5M14 17h-3a2 2 0 0 1-2-2v-5"/></svg></div>
+            <h3>流程優化與自動化</h3>
+            <p>探索 AI 在重複性作業、資料整理與知識管理中的應用，減少繁瑣步驟，讓團隊把時間留給更重要的工作。</p>
+            <div class="service-foot">從手動作業到順暢流程</div>
+          </article>
+          <article class="service-card reveal delay-2">
+            <span class="service-number">03 / EVALUATION</span>
+            <div class="service-icon"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V5M4 19h17"/><path d="m7 15 4-4 3 2 5-7"/><circle cx="19" cy="6" r="1.5"/></svg></div>
+            <h3>AI 解決方案評估</h3>
+            <p>從技術可行性、導入成本、資料條件與預期效益多角度檢視方案，協助團隊建立清楚的比較與決策依據。</p>
+            <div class="service-foot">從模糊想法到可評估選項</div>
+          </article>
+          <article class="service-card reveal delay-3">
+            <span class="service-number">04 / ENABLEMENT</span>
+            <div class="service-icon"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v3m0 12v3M3 12h3m12 0h3"/><circle cx="12" cy="12" r="6"/><path d="m9 12 2 2 4-4"/></svg></div>
+            <h3>導入諮詢與持續優化</h3>
+            <p>依照實際工作情境提供規劃與調整建議，以循序漸進的方式協助組織累積 AI 應用經驗。</p>
+            <div class="service-foot">從初步規劃到持續迭代</div>
+          </article>
+        </div>
+        <div class="services-closing reveal">
+          <p><strong>AI 的價值不只在技術本身，</strong>更在於如何賦能人才、改善流程並創造商業價值。透過需求梳理與策略整合，讓 AI 成為組織持續創新的助力。</p>
+          <div class="closing-mark" aria-hidden="true"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8m0-12.8L5.6 18.4"/></svg></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 / SELECTED WORKS -->
+    <section class="section section-soft" id="works" aria-labelledby="worksTitle">
+      <div class="container">
+        <div class="works-header">
+          <div class="section-heading reveal">
+            <span class="eyebrow">Selected Works</span>
+            <h2 id="worksTitle">讓設計判斷，<span class="gradient-text">被看見。</span></h2>
+            <p>從問題定義到介面結構，展示如何整理資訊、設計流程，並探索 AI 輔助工作的可能。</p>
+          </div>
+          <div class="placeholder-note reveal delay-1">目前展示為「案例版型示範」，並非已驗證的實際客戶專案。後續可替換為正式案例與作品畫面。</div>
+        </div>
+        <div class="works-grid">
+          <article class="project-card featured reveal">
+            <div class="project-visual">
+              <span class="project-chip">UI MOCKUP / REPLACEABLE</span>
+              <div class="project-ui" aria-label="後台管理介面示意圖（佔位）" role="img">
+                <div class="ui-sidebar"><div class="ui-logo"></div><div class="ui-skeleton active"></div><div class="ui-skeleton"></div><div class="ui-skeleton"></div><div class="ui-skeleton"></div><div class="ui-skeleton" style="margin-top:22px;width:67%"></div><div class="ui-skeleton"></div></div>
+                <div class="ui-content"><div class="ui-title">Overview / Dashboard</div><div class="ui-stats"><div class="ui-stat"><b></b><span></span></div><div class="ui-stat"><b></b><span></span></div><div class="ui-stat"><b></b><span></span></div></div><div class="ui-chart"><span style="height:35%"></span><span style="height:52%"></span><span style="height:42%"></span><span style="height:73%"></span><span style="height:60%"></span><span style="height:84%"></span><span style="height:95%"></span><span style="height:75%"></span><span style="height:100%"></span></div><div class="ui-table"><span></span><span></span><span></span></div></div>
+              </div>
+            </div>
+            <div class="project-content">
+              <div class="project-meta"><span class="demo-label">案例版型示範</span><span>UI/UX</span><span>資訊架構</span></div>
+              <h3>從複雜資訊到清楚的系統操作體驗</h3>
+              <p>以後台管理系統為示意情境，呈現如何從資訊層級、操作任務與閱讀效率出發，梳理介面結構與重要資訊。</p>
+              <dl class="project-details"><div><dt>問題與挑戰</dt><dd>資訊密度高，使用者不易快速定位重點。</dd></div><div><dt>設計思考</dt><dd>建立內容層級、任務順序與一致的元件規則。</dd></div><div><dt>可替換交付</dt><dd>流程圖、線框稿、介面設計與互動原型。</dd></div><div><dt>成果欄位</dt><dd>待補充實際專案內容與可驗證成果。</dd></div></dl>
+              <div class="project-footer">＊示意版型，不代表已完成或已量化驗證的專案。</div>
+            </div>
+          </article>
+          <article class="project-card reveal delay-1">
+            <div class="project-visual system">
+              <span class="project-chip">SYSTEM UI / REPLACEABLE</span>
+              <div class="system-ui" role="img" aria-label="系統資訊架構示意圖（佔位）"><div class="system-head"><span>Workspace settings</span><span style="color:#237A55">● Active</span></div><div class="system-row"><div class="system-dot">01</div><div class="system-lines"><b></b><span></span></div><span class="system-status"></span></div><div class="system-row"><div class="system-dot">02</div><div class="system-lines"><b style="width:56%"></b><span style="width:83%"></span></div><span class="system-status"></span></div><div class="system-row"><div class="system-dot">03</div><div class="system-lines"><b style="width:38%"></b><span style="width:62%"></span></div><span class="system-status"></span></div></div>
+            </div>
+            <div class="project-content">
+              <div class="project-meta"><span class="demo-label">案例版型示範</span><span>System Design</span></div>
+              <h3>讓設定更容易理解與管理</h3>
+              <p>以系統管理情境示意分組、命名與設定流程的整理方式，降低理解不同設定項目的負擔。</p>
+              <div class="project-footer">待補：問題背景、設計取捨、真實畫面與交付項目。</div>
+            </div>
+          </article>
+          <article class="project-card reveal delay-2">
+            <div class="project-visual ai">
+              <span class="project-chip">AI PROTOTYPE / REPLACEABLE</span>
+              <div class="ai-canvas" role="img" aria-label="AI 輔助設計工作流程示意圖（佔位）"><div class="ai-canvas-head"><span>AI-assisted design flow</span><span style="color:#23B7BA">EXPLORATION</span></div><div class="ai-nodes"><div class="ai-node">需求</div><span class="ai-connector"></span><div class="ai-node">Prompt</div><span class="ai-connector"></span><div class="ai-node">Prototype</div></div></div>
+            </div>
+            <div class="project-content">
+              <div class="project-meta"><span class="demo-label">案例版型示範</span><span>AI × UI/UX</span></div>
+              <h3>用 AI 加速設計探索與原型驗證</h3>
+              <p>呈現 AI 在發想、視覺方向探索與原型製作流程中的可能角色，保留設計判斷與人工檢核。</p>
+              <div class="project-footer">待補：使用工具、工作流程、實際輸出與限制觀察。</div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 / INSIGHTS -->
+    <section class="section" id="insights" aria-labelledby="insightsTitle">
+      <div class="container insights-layout">
+        <div class="insights-intro reveal">
+          <div class="section-heading">
+            <span class="eyebrow">Insights & Notes</span>
+            <h2 id="insightsTitle">持續提問，<br><span class="gradient-text">持續找到更好的做法。</span></h2>
+            <p>從設計流程到 AI 應用，整理值得反覆思考的問題與實務觀察。</p>
+          </div>
+          <div class="insight-note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></svg><span>以下內容為文章方向示範，尚非正式發布文章。正式文章上線後，可在此替換摘要與連結。</span></div>
+        </div>
+        <div class="article-list reveal delay-1">
+          <article class="article-item">
+            <div class="article-index">NOTE / 01</div>
+            <div><span class="article-category">AI × UI/UX</span><h3>AI 進入設計流程後，設計師的價值如何改變？</h3><p>從產出速度回到問題定義、判斷品質與使用者脈絡，思考人與 AI 如何有效分工。</p><div class="article-state">示範文章｜正式內容待補</div></div>
+            <span class="article-arrow" aria-hidden="true">↗</span>
+          </article>
+          <article class="article-item">
+            <div class="article-index">NOTE / 02</div>
+            <div><span class="article-category">WORKFLOW</span><h3>讓 AI 真正融入工作流程：先找到重複發生的問題</h3><p>與其從工具開始，不如先觀察流程中的等待、重工與資訊斷點，再評估值得改善的環節。</p><div class="article-state">示範文章｜正式內容待補</div></div>
+            <span class="article-arrow" aria-hidden="true">↗</span>
+          </article>
+          <article class="article-item">
+            <div class="article-index">NOTE / 03</div>
+            <div><span class="article-category">INFORMATION DESIGN</span><h3>資訊架構的價值：讓重要的事情更容易被找到</h3><p>好的結構不只是在分類內容，更是理解任務、建立預期，並幫助使用者做出下一步判斷。</p><div class="article-state">示範文章｜正式內容待補</div></div>
+            <span class="article-arrow" aria-hidden="true">↗</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05.5 / CORE SOLUTIONS：有正式專案連結時，將 href 換成網址並加上 target="_blank" rel="noopener noreferrer" -->
+    <section class="section section-soft" id="solutions" aria-labelledby="solutionsTitle">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">Core Solutions</span>
+          <h2 id="solutionsTitle">核心產品與<span class="gradient-text">技術解決方案</span></h2>
+          <p>將 AI 技術與設計思維結合，打造能實際落地的產品與工具，點擊卡片即可預約深入了解。</p>
+        </div>
+        <div class="solutions-grid">
+          <a class="solution-card reveal" href="#contact" aria-label="AI 知識庫問答助理：前往預約區塊洽詢此方案">
+            <div class="solution-icon"><i class="fa-brands fa-github" aria-hidden="true"></i></div>
+            <h3>AI 知識庫問答助理</h3>
+            <p>以 RAG（檢索增強生成）架構整合企業內部文件、規章與 FAQ，讓同仁用自然語言提問，即可取得附上出處的回答，降低查找資訊的時間成本。</p>
+            <span class="solution-link">洽詢此方案 <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+          </a>
+          <a class="solution-card reveal delay-1" href="#contact" aria-label="流程自動化 AI Agent：前往預約區塊洽詢此方案">
+            <div class="solution-icon"><i class="fa-solid fa-robot" aria-hidden="true"></i></div>
+            <h3>流程自動化 AI Agent</h3>
+            <p>串接表單、郵件與試算表等日常工具，由 AI 協助分類、摘要與資料整理，將重複性作業轉為可追蹤的自動化流程，讓團隊專注在需要判斷的工作。</p>
+            <span class="solution-link">洽詢此方案 <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+          </a>
+          <a class="solution-card reveal delay-2" href="#contact" aria-label="數據洞察視覺化儀表板：前往預約區塊洽詢此方案">
+            <div class="solution-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></div>
+            <h3>數據洞察視覺化儀表板</h3>
+            <p>以資訊設計思維整理複雜數據，結合 AI 自動生成重點摘要與趨勢提示，把分散的報表轉化為一眼就能理解、可直接支援決策的視覺化介面。</p>
+            <span class="solution-link">洽詢此方案 <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05.6 / CONNECT：社群連結與需求表單 -->
+    <section class="section" id="connect" aria-labelledby="connectTitle">
+      <div class="container">
+        <div class="section-heading reveal">
+          <span class="eyebrow">Contact Me</span>
+          <h2 id="connectTitle">保持聯繫，<span class="gradient-text">從一則訊息開始。</span></h2>
+          <p>透過社群追蹤最新的 AI 應用分享，或直接填寫需求表單，我會在了解你的情境後與你聯繫。</p>
+        </div>
+        <div class="connect-layout">
+          <div class="connect-panel reveal">
+            <h3>社群連結</h3>
+            <p>選擇你習慣的平台，加入社群或與我交流。</p>
+            <div class="social-grid">
+              <a class="social-link line" href="https://aistudy.pse.is/linemdsgroup" target="_blank" rel="noopener noreferrer" aria-label="在新分頁開啟 LINE 社群">
+                <i class="fa-brands fa-line" aria-hidden="true"></i><span><b>LINE</b><small>加入 LINE 社群</small></span>
+              </a>
+              <a class="social-link facebook" href="https://www.facebook.com/MarketingDataScienceTMR/" target="_blank" rel="noopener noreferrer" aria-label="在新分頁開啟 Facebook 粉絲專頁">
+                <i class="fa-brands fa-facebook-f" aria-hidden="true"></i><span><b>Facebook</b><small>追蹤粉絲專頁</small></span>
+              </a>
+              <a class="social-link linkedin" href="https://www.linkedin.com/in/howardzhong/" target="_blank" rel="noopener noreferrer" aria-label="在新分頁開啟 LinkedIn 個人檔案">
+                <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i><span><b>LinkedIn</b><small>建立專業連結</small></span>
+              </a>
+              <!-- GitHub 連結待補：取得網址後，將此 span 改為 <a class="social-link github" href="網址" target="_blank" rel="noopener noreferrer"> -->
+              <span class="social-link github pending" title="GitHub 連結即將公開">
+                <i class="fa-brands fa-github" aria-hidden="true"></i><span><b>GitHub</b><small>即將公開</small></span>
+              </span>
+            </div>
+          </div>
+          <div class="connect-panel form-panel reveal delay-1">
+            <h3>填寫需求表單</h3>
+            <p>告訴我你的需求與目前遇到的問題，約 3 分鐘即可完成。</p>
+            <ul class="form-steps">
+              <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i>說明目前的工作情境與目標</li>
+              <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i>收到表單後，我會評估適合的方向</li>
+              <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i>再約時間進一步討論細節</li>
+            </ul>
+            <div class="form-actions">
+              <a class="btn btn-primary" href="https://docs.google.com/forms/d/e/1FAIpQLScV5lwoVd0EDZj-M38HGUg4MiQxpGC3P-mm9sAN5QEGEBKTIQ/viewform" target="_blank" rel="noopener noreferrer"><i class="fa-regular fa-pen-to-square" aria-hidden="true"></i>填寫需求表單 <span class="arrow" aria-hidden="true">↗</span></a>
+              <button class="btn btn-secondary" id="formToggle" type="button" aria-expanded="false" aria-controls="formEmbed"><i class="fa-solid fa-table-list" aria-hidden="true"></i><span>在此頁面填寫</span></button>
+            </div>
+            <div class="form-embed" id="formEmbed">
+              <iframe data-src="https://docs.google.com/forms/d/e/1FAIpQLScV5lwoVd0EDZj-M38HGUg4MiQxpGC3P-mm9sAN5QEGEBKTIQ/viewform?embedded=true" title="需求表單" loading="lazy">載入中…</iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 / CONTACT -->
+    <section class="contact-section" id="contact" aria-labelledby="contactTitle">
+      <div class="container">
+        <div class="contact-card reveal">
+          <div class="contact-layout">
+            <div class="contact-copy">
+              <span class="eyebrow">Let's Connect</span>
+              <h2 id="contactTitle">讓想法開始，<br><span class="gradient-text">讓 AI 創造更多可能。</span></h2>
+              <p>無論你正在探索 AI 的應用機會、思考流程優化，或希望重新檢視數位產品體驗，都歡迎預約交流，從實際需求出發，找出值得實現的方向。</p>
+              <div class="contact-details">
+                <span class="contact-detail"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3v3m0 12v3M3 12h3m12 0h3"/><circle cx="12" cy="12" r="6"/></svg>UI/UX × AI 應用規劃</span>
+                <span class="contact-detail"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="m4 7 8 6 8-6"/></svg>歡迎合作與專業交流</span>
+              </div>
+            </div>
+            <div class="contact-action">
+              <a class="connect-btn" href="https://calendar.app.google/X8D4iH9J2Y5DHUbK7" target="_blank" rel="noopener noreferrer" aria-label="在新分頁開啟 Google Calendar 預約 AI 諮詢">預約 AI 諮詢 <span aria-hidden="true">↗</span></a>
+              <div class="ready-status"><span aria-hidden="true"></span>Status: Ready to Connect</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand"><span class="brand-mark" aria-hidden="true">E</span><span>Emma · Design × AI</span></div>
+      <div class="footer-copy">© <span id="currentYear">2026</span> Emma. 化繁為簡，讓數據洞察更直覺。</div>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const header = document.getElementById('siteHeader');
+      const menuToggle = document.getElementById('menuToggle');
+      const nav = document.getElementById('siteNav');
+      const menuIcon = document.getElementById('menuIcon');
+
+      // 需求表單：第一次展開時才載入 Google Form iframe
+      const formToggle = document.getElementById('formToggle');
+      const formEmbed = document.getElementById('formEmbed');
+      formToggle?.addEventListener('click', () => {
+        const open = formEmbed.classList.toggle('open');
+        const frame = formEmbed.querySelector('iframe');
+        if (open && !frame.src) frame.src = frame.dataset.src;
+        formToggle.setAttribute('aria-expanded', String(open));
+        formToggle.querySelector('span').textContent = open ? '收合表單' : '在此頁面填寫';
+      });
+      const cursor = document.getElementById('typingCursor');
+      const lineOne = document.getElementById('heroLineOne');
+      const lineTwo = document.getElementById('heroLineTwo');
+      const fullLineOne = '化繁為簡，';
+      const fullLineTwo = '讓數據洞察更直覺。';
+      const navLinks = [...document.querySelectorAll('.nav-link')];
+
+      // 使用 Array.from 逐個 Unicode 字元處理中文，避免以 UTF-16 code unit 切割造成字元問題。
+      function runTypewriter() {
+        if (reduceMotion) {
+          lineOne.textContent = fullLineOne;
+          lineTwo.textContent = fullLineTwo;
+          cursor.classList.add('done');
+          return;
+        }
+        lineOne.textContent = '';
+        lineTwo.textContent = '';
+        const firstChars = Array.from(fullLineOne);
+        const secondChars = Array.from(fullLineTwo);
+        let index = 0;
+        const typeFirst = () => {
+          if (index < firstChars.length) {
+            lineOne.textContent += firstChars[index++];
+            window.setTimeout(typeFirst, 145);
+          } else {
+            index = 0;
+            window.setTimeout(typeSecond, 160);
+          }
+        };
+        const typeSecond = () => {
+          if (index < secondChars.length) {
+            lineTwo.textContent += secondChars[index++];
+            window.setTimeout(typeSecond, 105);
+          } else {
+            cursor.classList.add('done');
+          }
+        };
+        window.setTimeout(typeFirst, 220);
+      }
+
+      // 行動版導覽開關：點選連結後關閉選單，Esc 亦可關閉。
+      function setMenu(open) {
+        nav.classList.toggle('open', open);
+        document.body.classList.toggle('menu-open', open);
+        menuToggle.setAttribute('aria-expanded', String(open));
+        menuToggle.setAttribute('aria-label', open ? '關閉導覽選單' : '開啟導覽選單');
+        menuIcon.innerHTML = open
+          ? '<path d="m6 6 12 12M18 6 6 18"/>'
+          : '<path d="M4 7h16M4 12h16M4 17h16"/>';
+      }
+      menuToggle.addEventListener('click', () => setMenu(menuToggle.getAttribute('aria-expanded') !== 'true'));
+      navLinks.forEach(link => link.addEventListener('click', () => setMenu(false)));
+      document.addEventListener('keydown', event => { if (event.key === 'Escape') setMenu(false); });
+      window.addEventListener('resize', () => { if (window.innerWidth > 820) setMenu(false); });
+
+      // 固定導覽列陰影與目前區塊狀態。
+      const updateHeader = () => header.classList.toggle('scrolled', window.scrollY > 12);
+      window.addEventListener('scroll', updateHeader, { passive: true });
+      updateHeader();
+
+      if ('IntersectionObserver' in window) {
+        const sectionObserver = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const activeId = entry.target.id;
+              navLinks.forEach(link => {
+                const active = link.getAttribute('href') === `#${activeId}`;
+                link.classList.toggle('active', active);
+                if (active) link.setAttribute('aria-current', 'location');
+                else link.removeAttribute('aria-current');
+              });
+            }
+          });
+        }, { rootMargin: '-28% 0px -58% 0px', threshold: 0 });
+        document.querySelectorAll('main section[id]').forEach(section => sectionObserver.observe(section));
+
+        if (!reduceMotion) {
+          const revealObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                revealObserver.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.12, rootMargin: '0px 0px -35px 0px' });
+          document.querySelectorAll('.reveal').forEach(element => revealObserver.observe(element));
+        } else {
+          document.querySelectorAll('.reveal').forEach(element => element.classList.add('is-visible'));
+        }
+      } else {
+        document.querySelectorAll('.reveal').forEach(element => element.classList.add('is-visible'));
+      }
+
+      document.getElementById('currentYear').textContent = new Date().getFullYear();
+      runTypewriter();
+    })();
+  </script>
+</body>
+</html>
